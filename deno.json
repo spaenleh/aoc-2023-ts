@@ -1,6 +1,5 @@
 {
   "tasks": {
-    "dev": "deno run --watch main.ts",
     "day": "cd $INIT_CWD && deno run --allow-read main.ts"
   }
 }
