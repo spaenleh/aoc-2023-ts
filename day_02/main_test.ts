@@ -20,7 +20,3 @@ Deno.test("part two", () => {
 
   assertEquals(res, 2286);
 });
-
-function extractNumber(test: string): any {
-  throw new Error("Function not implemented.");
-}
