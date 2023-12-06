@@ -52,9 +52,9 @@ export const partTwo = (input: string): number => {
     },
     [],
   );
-  console.log(seeds);
+  // console.log(seeds);
   // split each section
-  const res = steps.reduce((intermediary, step) => {
+  const res = steps.slice(0, 2).reduce((seedRangesAcc, step) => {
     const [_conversionLine, ...ranges] = step.trim().split("\n").filter(
       Boolean,
     );
@@ -66,41 +66,78 @@ export const partTwo = (input: string): number => {
       return { destStart, sourceStart, rangeLength };
     });
     // console.log(translations);
-    intermediary = intermediary.reduce<{ start: number; length: number }[]>(
-      (acc, s) => {
+    seedRangesAcc = seedRangesAcc.reduce<{ start: number; length: number }[]>(
+      (acc, startSeed) => {
+        let s: undefined | { start: number; length: number } = startSeed;
         translations.forEach((t) => {
-          // seed range can be completely translated
-          if (
-            s.start >= t.sourceStart &&
-            t.sourceStart + t.rangeLength >= s.start + s.length
-          ) {
-            // update seed by only shifting the start by the difference between the translation dest and the source
-            acc.push({
-              start: t.sourceStart - s.start + t.destStart,
-              length: s.length,
-            });
-          }
-          // seeds range starts in the translation
-          if (
-            s.start >= t.sourceStart && s.start < t.sourceStart + t.rangeLength
-          ) {
-            // find how much we can translate
-            acc.push({
-              start: t.destStart,
-              length: t.sourceStart + t.rangeLength - s.start,
-            });
-            // acc
+          if (s == undefined) {
+            return;
+          } else {
+            console.log("t=", t);
+            console.log("s=", s);
+            // seed range can be completely translated
+            if (
+              s.start >= t.sourceStart &&
+              t.sourceStart + t.rangeLength >= s.start + s.length
+            ) {
+              const newSeed = {
+                start: t.sourceStart - s.start + t.destStart,
+                length: s.length,
+              };
+              console.log("Full", newSeed);
+              // update seed by only shifting the start by the difference between the translation dest and the source
+              acc.push(newSeed);
+              s = undefined;
+            } else if (
+              // seeds range starts in the translation
+              s.start >= t.sourceStart &&
+              s.start < t.sourceStart + t.rangeLength
+            ) {
+              const newLength = t.sourceStart + t.rangeLength - s.start;
+              const newSeed = {
+                start: t.destStart,
+                length: newLength,
+              };
+              console.log("MatchStart", newSeed);
+              // find how much we can translate
+              acc.push(newSeed);
+              s = {
+                start: t.sourceStart + t.rangeLength,
+                length: s.length - newLength,
+              };
+            } else if (
+              t.sourceStart >= s.start &&
+              s.start + s.length < t.sourceStart + t.rangeLength
+            ) {
+              // range ends in th translation
+              const newLength = s.length - (t.sourceStart - s.start);
+              console.log(newLength);
+              const newSeed = {
+                start: t.destStart,
+                length: newLength,
+              };
+              // find how much we can translate
+              acc.push(newSeed);
+              console.log("MatchEnd", newSeed);
+              s = {
+                start: t.sourceStart + t.rangeLength,
+                length: s.length - newLength,
+              };
+            }
           }
         });
-        console.log(acc);
+        if (s != undefined) {
+          acc.push(s);
+        }
+        // console.log(acc);
 
         return acc;
       },
       [],
     );
-    return intermediary;
+    return seedRangesAcc;
   }, seeds);
-  console.log(res);
+  // console.log(res);
   return Math.min(...res.map((s) => s.start));
 };
 
