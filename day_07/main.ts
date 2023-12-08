@@ -3,13 +3,13 @@ import { getLines, sum } from "../utils.ts";
 const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
 
 export const HANDS = {
-  FiveOfAKind: "fiveOfAKind",
-  FourOfAKind: "fourOfAKind",
-  FullHouse: "fullHouse",
-  ThreeOfAKind: "threeOfAKind",
-  TwoPair: "twoPair",
-  OnePair: "onePair",
-  HighCard: "highCard",
+  FiveOfAKind: "FiveOfAKind",
+  FourOfAKind: "FourOfAKind",
+  FullHouse: "FullHouse",
+  ThreeOfAKind: "ThreeOfAKind",
+  TwoPair: "TwoPair",
+  OnePair: "OnePair",
+  HighCard: "HighCard",
 } as const;
 const AllHands = [
   HANDS.FiveOfAKind,
@@ -138,15 +138,15 @@ export const improveHand = (handType: HandUnion, hand: string) => {
       return handType;
     case 1: {
       switch (handType) {
-        case "fourOfAKind":
+        case HANDS.FourOfAKind:
           return HANDS.FiveOfAKind;
-        case "threeOfAKind":
+        case HANDS.ThreeOfAKind:
           return HANDS.FourOfAKind;
-        case "twoPair":
+        case HANDS.TwoPair:
           return HANDS.FullHouse;
-        case "onePair":
+        case HANDS.OnePair:
           return HANDS.ThreeOfAKind;
-        case "highCard":
+        case HANDS.HighCard:
           return HANDS.OnePair;
         default:
           return handType;
@@ -154,13 +154,13 @@ export const improveHand = (handType: HandUnion, hand: string) => {
     }
     case 2: {
       switch (handType) {
-        case "fullHouse":
+        case HANDS.FullHouse:
           return HANDS.FiveOfAKind;
-        case "twoPair":
+        case HANDS.TwoPair:
           return HANDS.FourOfAKind;
-        case "highCard":
+        case HANDS.HighCard:
           return HANDS.ThreeOfAKind;
-        case "onePair":
+        case HANDS.OnePair:
           return HANDS.ThreeOfAKind;
         default:
           return handType;
@@ -168,9 +168,9 @@ export const improveHand = (handType: HandUnion, hand: string) => {
     }
     case 3: {
       switch (handType) {
-        case "fullHouse":
+        case HANDS.FullHouse:
           return HANDS.FiveOfAKind;
-        case "threeOfAKind":
+        case HANDS.ThreeOfAKind:
           return HANDS.FourOfAKind;
         default:
           return handType;
@@ -197,7 +197,6 @@ export const partOne = (input: string): number => {
     return hand;
   });
   game.sort(compareHands);
-  console.log(game);
   return sum(game.map((g, idx) => g.bid * (idx + 1)));
 };
 
@@ -214,7 +213,6 @@ export const partTwo = (input: string): number => {
     return hand;
   });
   game.sort((g1, g2) => compareHands(g1, g2, CardCompare2));
-  console.log(game);
   return sum(game.map((g, idx) => g.bid * (idx + 1)));
 };
 
