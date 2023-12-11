@@ -52,8 +52,6 @@ export const partTwo = (input: string): number => {
 
   // find all starting nodes (they end in A)
   const startingNodes = Object.keys(network).filter(startCondition);
-  const endNodes = Object.keys(network).filter(endCondition);
-  console.log(endNodes);
   const chains = startingNodes.map((n) => {
     let currentNode = n;
     let hops = 0;
@@ -67,7 +65,6 @@ export const partTwo = (input: string): number => {
   const gcd = (a: number, b: number): number => b == 0 ? a : gcd(b, a % b);
   const lcm = (a: number, b: number): number => a / gcd(a, b) * b;
   const res = chains.map((c) => c.length).reduce(lcm, 1);
-  // console.log(currentNodes);
   return res;
 };
 
