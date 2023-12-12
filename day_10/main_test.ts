@@ -1,5 +1,5 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
-import { partOne, partTwo } from "./main.ts";
+import { cleanupGrid, getLoop, partOne, partTwo, prepareGrid } from "./main.ts";
 
 const inputOne = `
 ..F7.
@@ -16,23 +16,24 @@ Deno.test("part one", () => {
 });
 
 Deno.test("part one cleanup", () => {
-  const res = prepareGrid(`
+  const grid = prepareGrid(`
 --F7.
 .FJ|.
 SJ.L7
 |F--J
-LJ...
+LJ---
 `);
+  const res = cleanupGrid(grid, getLoop(grid).loop);
 
   assertEquals(
     res,
-    `
---F7.
+    prepareGrid(`
+..F7.
 .FJ|.
-SJ.L7
+FJ.L7
 |F--J
 LJ...
-`,
+`),
   );
 });
 

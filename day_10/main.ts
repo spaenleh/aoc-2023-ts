@@ -67,15 +67,8 @@ const hasConnectingPipe = (c: Tile, grid: Grid) => {
   return connections;
 };
 
-const prepareGrid = (input: string) => {
-  const rawGrid = getLines(input).map((l) => [".", ...Array.from(l), "."]);
-  const paddingLine = Array.from(Array(rawGrid[0].length)).fill(".");
-  return [paddingLine, ...rawGrid, paddingLine];
-};
-
-export const partOne = (input: string): number => {
-  const grid = prepareGrid(input);
-  const startingPosition = grid.reduce<{ x: number; y: number } | undefined>(
+const getStartingPos = (grid: string[][]) =>
+  grid.reduce<{ x: number; y: number } | undefined>(
     (pos, line, yIdx) => {
       const xIdx = line.indexOf("S");
       if (xIdx !== -1) {
@@ -86,6 +79,15 @@ export const partOne = (input: string): number => {
     },
     undefined,
   );
+
+export const prepareGrid = (input: string): string[][] => {
+  const rawGrid = getLines(input).map((l) => [".", ...Array.from(l), "."]);
+  const paddingLine = Array.from(Array(rawGrid[0].length)).fill(".");
+  return [paddingLine, ...rawGrid, paddingLine];
+};
+
+export const getLoop = (grid: string[][]) => {
+  const startingPosition = getStartingPos(grid);
   if (!startingPosition) {
     throw new Error("Coundn't find the starting position");
   }
@@ -100,7 +102,6 @@ export const partOne = (input: string): number => {
       !loop.some((l) => l.x === p.x && l.y === p.y)
     );
     if (!chosenOne) {
-      console.log("found the start");
       currentTile = loop[0];
     } else {
       currentTile = chosenOne;
@@ -108,14 +109,108 @@ export const partOne = (input: string): number => {
     loop.push(currentTile);
     step += 1;
   } while (currentTile.sym !== "S");
+  return { loop, step };
+};
 
+const floodfill = (grid: string[][], loop: Tile[]) => {
+  let inOut = "O";
+  let countInside = 0;
+  let previousCorner = "";
+  const newGrid = grid.map((l, yIdx) => {
+    const line = l.map((c, xIdx) => {
+      const loopElem = loop.find((t) => t.x === xIdx && t.y === yIdx);
+      // on loop
+      if (loopElem !== undefined) {
+        if (
+          c === "|" || (previousCorner === "F" && c === "J") ||
+          (previousCorner === "L" && c === "7")
+        ) {
+          if (inOut === "O") {
+            inOut = "I";
+          } else {
+            inOut = "O";
+          }
+        }
+        if (["F", "L", "J", "7"].includes(c)) {
+          previousCorner = c;
+        }
+        return c;
+      } else {
+        if (inOut === "I") {
+          countInside += 1;
+        }
+        return inOut;
+      }
+    });
+    previousCorner = "";
+
+    return line;
+  });
+  return { count: countInside, grid: newGrid };
+};
+
+const dirPair = (
+  dirs: (keyof typeof D)[],
+  first: keyof typeof D,
+  last: keyof typeof D,
+) => {
+  return (dirs[0] === first && dirs[1] === last) ||
+    (dirs[1] === first && dirs[0] === last);
+};
+
+const findDirOf = (tile: Tile, start: Tile) =>
+  DIR.find((d) =>
+    d.dirOffset.x === (tile.x - start.x) &&
+    d.dirOffset.y === (tile.y - start.y)
+  ) || { dir: D.N };
+const replaceS = (loop: Tile[]) => {
+  const start = loop[0];
+  const first = loop[1];
+  const last = loop[loop.length - 2];
+  const dirFirst = findDirOf(first, start).dir;
+  const dirLast = findDirOf(last, start).dir;
+  switch (true) {
+    case dirPair([D.N, D.E], dirFirst, dirLast):
+      return "L";
+    case dirPair([D.N, D.S], dirFirst, dirLast):
+      return "|";
+    case dirPair([D.N, D.W], dirFirst, dirLast):
+      return "J";
+    case dirPair([D.E, D.S], dirFirst, dirLast):
+      return "F";
+    case dirPair([D.E, D.W], dirFirst, dirLast):
+      return "-";
+    case dirPair([D.S, D.W], dirFirst, dirLast):
+      return "7";
+    default:
+      return "X";
+  }
+};
+
+export const cleanupGrid = (grid: string[][], loop: Tile[]): string[][] => {
+  const cleanGrid = grid.map((l, yIdx) =>
+    l.map((c, xIdx) =>
+      loop.find((t) => t.x === xIdx && t.y === yIdx) !== undefined ? c : "."
+    )
+  );
+  cleanGrid[loop[0].y][loop[0].x] = replaceS(loop);
+
+  return cleanGrid;
+};
+
+export const partOne = (input: string): number => {
+  const grid = prepareGrid(input);
+  const { step } = getLoop(grid);
   return step / 2;
 };
 
 export const partTwo = (input: string): number => {
-  const lines = getLines(input);
-
-  return 0;
+  const grid = prepareGrid(input);
+  const { loop } = getLoop(grid);
+  const cleanGrid = cleanupGrid(grid, loop);
+  const { count, grid: newGrid } = floodfill(cleanGrid, loop);
+  printGrid(newGrid);
+  return count;
 };
 
 if (import.meta.main) {
