@@ -1,9 +1,6 @@
-import { getLines, sum } from "../utils.ts";
+import { getLines, sum, transposeArray } from "../utils.ts";
 
 const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
-
-const transposeArray = (arr: string[][]) =>
-  arr[0].map((_, colIndex) => arr.map((row) => row[colIndex]));
 
 const addLines = (arr: string[][]) =>
   arr.reduce<string[][]>((newLines, l) => {
