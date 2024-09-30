@@ -1,6 +1,7 @@
 import { getLines } from "../utils.ts";
 
-const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
+const getInput = (): Promise<string> =>
+  Deno.readTextFile(new URL(`./input.txt`, import.meta.url));
 
 const endCondition = (n: string) => n.endsWith("Z");
 const startCondition = (n: string) => n.endsWith("A");

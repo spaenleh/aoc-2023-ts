@@ -1,6 +1,8 @@
 import { getLines, multiply } from "../utils.ts";
 
-const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
+const getInput = (): Promise<string> =>
+  Deno.readTextFile(new URL(`./input.txt`, import.meta.url));
+
 const getValues = (input: string) =>
   input.split(":")[1].trim().split(" ").filter(Boolean).map((e) =>
     parseInt(e.trim())

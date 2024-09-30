@@ -1,6 +1,7 @@
 import { getLines } from "../utils.ts";
 
-const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
+const getInput = (): Promise<string> =>
+  Deno.readTextFile(new URL(`./input.txt`, import.meta.url));
 
 export const partOne = (input: string): number => {
   const lines = getLines(input);

@@ -1,6 +1,5 @@
-import { getLines } from "../utils.ts";
-
-const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
+const getInput = (): Promise<string> =>
+  Deno.readTextFile(new URL(`./input.txt`, import.meta.url));
 
 const computeSeedsDest = (seeds: number[], steps: string[]) => {
   const res = steps.reduce((intermediary, step) => {

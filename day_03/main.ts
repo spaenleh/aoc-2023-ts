@@ -1,6 +1,7 @@
 import { getLines, isNumber, multiply, sum } from "../utils.ts";
 
-const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
+const getInput = (): Promise<string> =>
+  Deno.readTextFile(new URL(`./input.txt`, import.meta.url));
 
 // utility function to get all symbols used
 const _getSymbols = (lines: string[]) =>

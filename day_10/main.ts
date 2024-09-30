@@ -9,7 +9,8 @@ const D = {
 
 type Tile = { x: number; y: number; sym: keyof typeof NEXT_DIR };
 type Grid = string[][];
-const getInput = (): Promise<string> => Deno.readTextFile(`./input.txt`);
+const getInput = (): Promise<string> =>
+  Deno.readTextFile(new URL(`./input.txt`, import.meta.url));
 
 const DIR = [{
   dir: D.N,
