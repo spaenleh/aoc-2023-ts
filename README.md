@@ -29,3 +29,14 @@ To run the full test suite:
 ```sh
 deno test
 ```
+
+## Getting the solutions
+
+To run the solution you will need to download the inputs specific to your
+account. Each input should be stored in the day folder inside a file called
+`input.txt` you should not share you inputs publically (notice that these files
+are excluded in the `.gitignore`).
+
+```sh
+deno run --allow-read day_xx/main.ts
+```
