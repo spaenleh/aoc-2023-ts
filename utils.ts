@@ -5,7 +5,8 @@ export const getLines = (input: string): string[] =>
 
 export const getBlocks = (input: string): string[] => input.split("\n\n");
 
-export const sum = (list: number[]): number => list.reduce((acc, e) => e + acc);
+export const sum = (list: number[]): number =>
+  list.reduce((acc, e) => e + acc, 0);
 
 // simple function to multiply a list of numbers together
 export const multiply = (list: number[]): number =>
