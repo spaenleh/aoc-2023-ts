@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
+import { assertEquals } from "assert";
 import { hash, hashString, partOne, partTwo } from "./main.ts";
 
 const inputOne = `
