@@ -37,6 +37,6 @@ Deno.test("part two", async (t) => {
   });
 });
 
-function extractNumber(test: string): any {
+function extractNumber(test: string): number {
   throw new Error("Function not implemented.");
 }
